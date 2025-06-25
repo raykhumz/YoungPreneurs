@@ -1,0 +1,84 @@
+import json
+
+class PsychometricTest:
+    def __init__(self):
+        self.questions = self.load_questions()
+        self.results = {
+            "Transformational": 0,
+            "Transactional": 0,
+            "Servant": 0,
+            "Laissez-Faire": 0
+        }
+    
+    def load_questions(self):
+        """Load questions from a JSON file (or define inline)."""
+        questions = [
+            {
+                "question": "When leading a team, I focus on inspiring and motivating others towards a shared vision.",
+                "options": ["Strongly Disagree", "Disagree", "Neutral", "Agree", "Strongly Agree"],
+                "weights": {"Transformational": 2, "Transactional": 0, "Servant": 1, "Laissez-Faire": -1}
+            },
+            {
+                "question": "I prefer setting clear goals and rewarding team members when they meet expectations.",
+                "options": ["Strongly Disagree", "Disagree", "Neutral", "Agree", "Strongly Agree"],
+                "weights": {"Transformational": 0, "Transactional": 2, "Servant": -1, "Laissez-Faire": 0}
+            },
+            {
+                "question": "I prioritize the growth and well-being of my team members over strict results.",
+                "options": ["Strongly Disagree", "Disagree", "Neutral", "Agree", "Strongly Agree"],
+                "weights": {"Transformational": 1, "Transactional": -1, "Servant": 2, "Laissez-Faire": 0}
+            },
+            {
+                "question": "I give my team a lot of freedom and only step in when necessary.",
+                "options": ["Strongly Disagree", "Disagree", "Neutral", "Agree", "Strongly Agree"],
+                "weights": {"Transformational": -1, "Transactional": 0, "Servant": 0, "Laissez-Faire": 2}
+            }
+        ]
+        return questions
+    
+    def run_test(self):
+        """Run the test and collect user responses."""
+        print("\n🌟 Leadership Style Psychometric Test 🌟")
+        print("Rate each statement from 1 (Strongly Disagree) to 5 (Strongly Agree)\n")
+        
+        for i, q in enumerate(self.questions, 1):
+            print(f"{i}. {q['question']}")
+            for idx, option in enumerate(q["options"], 1):
+                print(f"   {idx}. {option}")
+            
+            while True:
+                try:
+                    choice = int(input("Your answer (1-5): "))
+                    if 1 <= choice <= 5:
+                        break
+                    else:
+                        print("Please enter a number between 1 and 5.")
+                except ValueError:
+                    print("Invalid input. Enter a number.")
+            
+            # Update scores based on choice
+            for style, weight in q["weights"].items():
+                self.results[style] += (choice - 3) * weight  # Center at 3 (Neutral)
+    
+    def get_result(self):
+        """Determine the dominant leadership style."""
+        dominant_style = max(self.results.items(), key=lambda x: x[1])[0]
+        
+        feedback = {
+            "Transformational": "You are a visionary leader who inspires and motivates others toward innovation.",
+            "Transactional": "You lead by setting clear expectations and rewarding performance.",
+            "Servant": "You prioritize team growth and well-being, fostering a supportive environment.",
+            "Laissez-Faire": "You give your team autonomy, intervening only when necessary."
+        }
+        
+        print("\n📊 Your Results:")
+        for style, score in self.results.items():
+            print(f"{style}: {score}")
+        
+        print(f"\n🎯 Your Leadership Style: **{dominant_style}**")
+        print(f"💡 {feedback[dominant_style]}")
+
+if __name__ == "__main__":
+    test = PsychometricTest()
+    test.run_test()
+    test.get_result()
